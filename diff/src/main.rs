@@ -36,9 +36,16 @@ fn main() {
     buf_read1 = std::io::BufReader::new(file1).lines();
     buf_read2 = std::io::BufReader::new(file2).lines();
 
-    // TODO: find a way to inter over the longer one.
-    for (i, j) in buf_read1.zip(buf_read2) {
-        println!("{} {}", i.ok().unwrap(), j.ok().unwrap())
+    let mut diff = String::from("");
+    
+    while let (Some(Ok(line1)), Some(Ok(line2))) = (buf_read1.next(), buf_read2.next()) {
+        if line1 != line2 {
+            while let (chars1, chars2) = (line1.chars(), line2.chars()) {
+                if chars1 != chars2 {
+                    // TODO: define what a diff is.
+                }
+            }
+        }
     }
 
     println!("Lines left in buf1: {}", buf_read1.count());
