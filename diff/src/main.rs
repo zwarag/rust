@@ -39,16 +39,15 @@ fn main() {
     let mut diff = String::from("");
     
     while let (Some(Ok(line1)), Some(Ok(line2))) = (buf_read1.next(), buf_read2.next()) {
-        if line1 != line2 {
-            while let (chars1, chars2) = (line1.chars(), line2.chars()) {
-                if chars1 != chars2 {
-                    // TODO: define what a diff is.
-                }
+        let mut chars1 = line1.chars();
+        let mut chars2 = line2.chars();
+        while let (Some(char1), Some(char2)) = (chars1.next(), chars2.next()) {
+            if char1 != char2 {
+                diff.push(char2)
             }
         }
+        diff.push('\n');
     }
 
-    println!("Lines left in buf1: {}", buf_read1.count());
-    println!("Lines left in buf2: {}", buf_read2.count());
-
+    println!("The diff is: \n {}", diff);
 }
