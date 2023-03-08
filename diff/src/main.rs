@@ -64,6 +64,7 @@ fn main() {
                                     diff.push(char2)
                                 }, 
                                 (None, None) => {
+                                    // no more chars left in either file
                                     break;
                                 }
                             }
@@ -97,7 +98,7 @@ fn main() {
                 }
             },
             (None, None) => {
-                // no more lines left
+                // no more lines left in either file
                 break;
             },
         }
