@@ -37,17 +37,77 @@ fn main() {
     buf_read2 = std::io::BufReader::new(file2).lines();
 
     let mut diff = String::from("");
+
+    let mut nextline1 = buf_read1.next();
+    let mut nextline2 = buf_read2.next();
     
-    while let (Some(Ok(line1)), Some(Ok(line2))) = (buf_read1.next(), buf_read2.next()) {
-        let mut chars1 = line1.chars();
-        let mut chars2 = line2.chars();
-        while let (Some(char1), Some(char2)) = (chars1.next(), chars2.next()) {
-            if char1 != char2 {
-                diff.push(char2)
-            }
+    loop {
+        match (nextline1, nextline2) {
+            (Some(line1), Some(line2)) => {
+                match (line1, line2) {
+                    (Ok(line1), Ok(line2)) => {
+                        let mut chars1 = line1.chars();
+                        let mut chars2 = line2.chars();
+                        let mut char1 = chars1.next();
+                        let mut char2 = chars2.next();
+                        loop {
+                            match (char1, char2) {
+                                (Some(char1), Some(char2)) => {
+                                    if char1 != char2 {
+                                        diff.push(char2);
+                                    }
+                                },
+                                (Some(char1), None) => {
+                                    diff.push(char1);
+                                },
+                                (None, Some(char2)) => {
+                                    diff.push(char2)
+                                }, 
+                                (None, None) => {
+                                    break;
+                                }
+                            }
+                            char1 = chars1.next();
+                            char2 = chars2.next();
+                        }
+                    },
+                    _ => {
+                        panic!("oh no");
+                    }
+                }
+            },
+            (Some(line1), None) => {
+                match line1 {
+                    Ok(line1) => {
+                        diff.push_str(&line1);
+                    },
+                    _ => {
+                        panic!("oh no");
+                    }
+                }
+            },
+            (None, Some(line2)) => {
+                match line2 {
+                    Ok(line2) => {
+                        diff.push_str(&line2);
+                    },
+                    _ => {
+                        panic!("oh no");
+                    }
+                }
+            },
+            (None, None) => {
+                // no more lines left
+                break;
+            },
         }
+
         diff.push('\n');
+        nextline1 = buf_read1.next();
+        nextline2 = buf_read2.next();
     }
 
-    println!("The diff is: \n {}", diff);
+    for (i, line) in diff.lines().enumerate() {
+        println!("\t{}: {}", i, line)
+    }
 }
